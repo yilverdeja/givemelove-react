@@ -58,7 +58,7 @@ function App() {
 	};
 
 	const githubRepoURl =
-		'https://api.github.com/repos/yilverdeja/canto-numbers';
+		'https://api.github.com/repos/yilverdeja/givemelove-react';
 
 	return (
 		<>

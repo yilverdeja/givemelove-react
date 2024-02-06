@@ -1,30 +1,12 @@
-# React + TypeScript + Vite
+# Give Me Love
+A valentines-inspired clicker web app where single people all over the world can give each other some love through a heart on their screen
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+_Todo: Connect to database_
 
-Currently, two official plugins are available:
+## Themes
+### Dark Mode
+<img src="https://github.com/yilverdeja/givemelove-react/assets/29952939/5cab7242-3803-428a-bdbd-40206002bfea" alt="" width="500"/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Light Mode
+<img src="https://github.com/yilverdeja/givemelove-react/assets/29952939/60eb2e72-0ca2-489d-b55c-ce61617b90a9" alt="" width="500"/>
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list

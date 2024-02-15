@@ -1,17 +1,19 @@
 import { useEffect, useRef } from 'react';
 
 interface Props {
-	draw: () => void;
+	draw: (ctx: CanvasRenderingContext2D) => void;
 	height: number;
 	width: number;
 }
 const Canvas = ({ draw, height, width }: Props) => {
-	const canvas = useRef();
+	const canvas = useRef<HTMLCanvasElement | null>(null);
 
 	useEffect(() => {
-		const context = canvas.current?.getContext('2d');
-		context.globalCompositeOperation = 'destination-over';
-		draw(context);
+		const context = canvas?.current?.getContext('2d');
+		if (context) {
+			context.globalCompositeOperation = 'destination-over';
+			draw(context);
+		}
 	});
 	return (
 		<canvas

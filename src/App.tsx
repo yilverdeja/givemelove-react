@@ -32,7 +32,7 @@ function App() {
 		setTheme(newTheme);
 	};
 
-	const draw = (ctx) => {
+	const draw = (ctx: CanvasRenderingContext2D) => {
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		const id = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
 		const pixels = id.data;
@@ -62,7 +62,11 @@ function App() {
 
 	return (
 		<>
-			<Canvas draw={draw} width={size.width} height={size.height} />
+			<Canvas
+				draw={draw}
+				width={size.width ? size.width : 100}
+				height={size.height ? size.height : 100}
+			/>
 			<div className="flex flex-col justify-evenly items-center h-lvh m-auto pl-5 pr-5 select-none z-10 text-black dark:text-white">
 				<div className="flex flex-row justify-between w-full max-w-3xl z-10">
 					<GithubStats apiUrl={githubRepoURl} />

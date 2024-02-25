@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HeartCounter from './components/HeartCounter';
 import Footer from './components/Footer';
 import UpdateText from './components/UpdateText';
@@ -7,21 +7,75 @@ import Canvas from './components/Canvas';
 import ThemeToggle from './components/ThemeToggle';
 import GithubStats from './components/GithubStats';
 import './index.css';
+import { db, auth } from './services/firebase';
+import {
+	doc,
+	updateDoc,
+	getDoc,
+	Timestamp,
+	increment,
+} from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
+import { useDebounce } from '@uidotdev/usehooks';
 
 function App() {
 	const [lastUpdated, setLastUpdated] = useState(new Date());
 	const [currentDatetime, setCurrentDatetime] = useState(new Date());
 	const [theme, setTheme] = useState('light');
-	const [count, setCount] = useState(10000);
+	const [count, setCount] = useState(0);
+	const [totalCount, setTotalCount] = useState(0);
+	const [error, setError] = useState('');
 	const size = useWindowSize();
+	const counterRef = doc(db, 'counter/counter');
+
+	const submitCounterDebounce = useDebounce(count, 1000);
+
+	useEffect(() => {
+		// sign in anonymously then get data
+		signInAnonymously(auth)
+			.then(() => {
+				getDoc(counterRef)
+					.then((res) => {
+						const data = res.data();
+						if (data) setTotalCount(data.count);
+					})
+					.catch((err) => {
+						setError(err.message);
+					});
+			})
+			.catch((err) => {
+				setError(err.message);
+			});
+	}, []);
+
+	useEffect(() => {
+		if (count === 0) return;
+		if (submitCounterDebounce) {
+			const timestamp = Timestamp.fromDate(new Date());
+			updateDoc(counterRef, {
+				count: increment(submitCounterDebounce),
+				lastUpdated: timestamp,
+			});
+			setCount(0);
+			setLastUpdated(new Date());
+		}
+	}, [submitCounterDebounce, counterRef, count]);
 
 	const handleClick = () => {
 		setCount(count + 1);
-		setLastUpdated(new Date());
+		setTotalCount(totalCount + 1);
 	};
 
 	const handleLastUpdatedRefresh = () => {
-		console.log('Refresh last updated');
+		getDoc(counterRef)
+			.then((res) => {
+				const data = res.data();
+				if (data) setTotalCount(data.count);
+			})
+			.catch((err) => {
+				setError(err.message);
+			});
+
 		setCurrentDatetime(new Date());
 	};
 
@@ -41,7 +95,7 @@ function App() {
 			return Math.floor(Math.random() * multiplier);
 		};
 
-		for (let i = 0; i < count; i++) {
+		for (let i = 0; i < totalCount; i++) {
 			const x = getRandom(ctx.canvas.width);
 			const y = getRandom(ctx.canvas.height);
 			const r = getRandom(256);
@@ -69,10 +123,14 @@ function App() {
 			/>
 			<div className="flex flex-col justify-evenly items-center h-lvh m-auto pl-5 pr-5 select-none z-10 text-black dark:text-white">
 				<div className="flex flex-row justify-between w-full max-w-3xl z-10">
-					<GithubStats apiUrl={githubRepoURl} />
+					{/* <GithubStats apiUrl={githubRepoURl} /> */}
 					<ThemeToggle toggleTheme={toggleTheme} />
 				</div>
-				<HeartCounter counter={count} onHold={handleClick} size={250} />
+				<HeartCounter
+					counter={totalCount}
+					onHold={handleClick}
+					size={250}
+				/>
 				<div className="flex flex-col justify-center items-center sm:flex-row sm:justify-between w-full max-w-3xl z-10">
 					<UpdateText
 						lastUpdated={lastUpdated}

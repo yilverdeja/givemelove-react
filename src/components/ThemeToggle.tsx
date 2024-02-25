@@ -12,9 +12,9 @@ const ThemeToggle = ({ toggleTheme }: Props) => {
 			className="z-10 text-black dark:text-white hover:cursor-pointer"
 		>
 			{document.documentElement.classList.contains('dark') ? (
-				<FaMoon size={20} />
-			) : (
 				<FaSun size={20} />
+			) : (
+				<FaMoon size={20} />
 			)}
 		</div>
 	);

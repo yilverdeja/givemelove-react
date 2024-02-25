@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@firebase/firestore-types": "^3.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "dayjs": "^1.11.10",
+    "firebase": "^10.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1"

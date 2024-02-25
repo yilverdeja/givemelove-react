@@ -42,6 +42,14 @@ function App() {
 	};
 
 	useEffect(() => {
+		// check theme
+		const theme = localStorage.getItem('theme');
+		if (theme) {
+			if (theme === 'dark')
+				document.documentElement.classList.add('dark');
+			else document.documentElement.classList.remove('dark');
+		}
+
 		// sign in anonymously then get data
 		signInAnonymously(auth)
 			.then(() => {
@@ -81,6 +89,7 @@ function App() {
 		const newTheme = theme === 'light' ? 'dark' : 'light';
 		if (newTheme === 'dark') document.documentElement.classList.add('dark');
 		else document.documentElement.classList.remove('dark');
+		localStorage.setItem('theme', newTheme);
 		setTheme(newTheme);
 	};
 

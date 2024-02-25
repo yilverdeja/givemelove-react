@@ -17,6 +17,7 @@ import {
 } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { useDebounce } from '@uidotdev/usehooks';
+import Alert from './components/Alert';
 
 function App() {
 	const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -58,6 +59,8 @@ function App() {
 			updateDoc(counterRef, {
 				count: increment(submitCounterDebounce),
 				lastUpdated: timestamp,
+			}).catch((err) => {
+				setError(err.message);
 			});
 			setCount(0);
 			setLastUpdated(new Date());
@@ -111,6 +114,7 @@ function App() {
 
 	return (
 		<>
+			<Alert message={error} onClose={() => setError('')} />
 			<Canvas
 				draw={draw}
 				width={size.width ? size.width : 100}

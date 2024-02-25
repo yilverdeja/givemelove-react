@@ -27,21 +27,24 @@ function App() {
 	const [error, setError] = useState('');
 	const size = useWindowSize();
 	const counterRef = doc(db, 'counter/counter');
-
 	const submitCounterDebounce = useDebounce(count, 1000);
+
+	const getData = () => {
+		getDoc(counterRef)
+			.then((res) => {
+				const data = res.data();
+				if (data) setTotalCount(data.count);
+			})
+			.catch((err) => {
+				setError(err.message);
+			});
+	};
 
 	useEffect(() => {
 		// sign in anonymously then get data
 		signInAnonymously(auth)
 			.then(() => {
-				getDoc(counterRef)
-					.then((res) => {
-						const data = res.data();
-						if (data) setTotalCount(data.count);
-					})
-					.catch((err) => {
-						setError(err.message);
-					});
+				getData();
 			})
 			.catch((err) => {
 				setError(err.message);
@@ -67,15 +70,7 @@ function App() {
 	};
 
 	const handleLastUpdatedRefresh = () => {
-		getDoc(counterRef)
-			.then((res) => {
-				const data = res.data();
-				if (data) setTotalCount(data.count);
-			})
-			.catch((err) => {
-				setError(err.message);
-			});
-
+		getData();
 		setCurrentDatetime(new Date());
 	};
 
@@ -123,7 +118,7 @@ function App() {
 			/>
 			<div className="flex flex-col justify-evenly items-center h-lvh m-auto pl-5 pr-5 select-none z-10 text-black dark:text-white">
 				<div className="flex flex-row justify-between w-full max-w-3xl z-10">
-					{/* <GithubStats apiUrl={githubRepoURl} /> */}
+					<GithubStats apiUrl={githubRepoURl} />
 					<ThemeToggle toggleTheme={toggleTheme} />
 				</div>
 				<HeartCounter

@@ -9,7 +9,9 @@ const Canvas = ({ draw, height, width }: Props) => {
 	const canvas = useRef<HTMLCanvasElement | null>(null);
 
 	useEffect(() => {
-		const context = canvas?.current?.getContext('2d');
+		const context = canvas?.current?.getContext('2d', {
+			willReadFrequently: true,
+		});
 		if (context) {
 			context.globalCompositeOperation = 'destination-over';
 			draw(context);

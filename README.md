@@ -1,8 +1,6 @@
 # Give Me Love
 A valentines-inspired clicker web app where single people all over the world can give each other some love through a heart on their screen
 
-_Todo: Connect to database_
-
 ## Themes
 ### Dark Mode
 <img src="https://github.com/yilverdeja/givemelove-react/assets/29952939/5cab7242-3803-428a-bdbd-40206002bfea" alt="" width="500"/>

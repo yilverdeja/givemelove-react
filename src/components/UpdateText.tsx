@@ -24,7 +24,7 @@ import { GrRefresh } from 'react-icons/gr';
 
 interface Props {
 	currentDateTime: Date;
-	lastUpdated: Date;
+	lastUpdated: Date | null;
 	onRefresh: () => void;
 }
 
@@ -32,7 +32,9 @@ const UpdateText = ({ lastUpdated, onRefresh, currentDateTime }: Props) => {
 	return (
 		<div className="flex flex-row gap-2 items-center justify-center">
 			<GrRefresh onClick={onRefresh} className="hover:cursor-pointer" />
-			updated {dayjs(lastUpdated).from(currentDateTime)}
+			{lastUpdated !== null
+				? 'updated ' + dayjs(lastUpdated).from(currentDateTime)
+				: 'Loading...'}
 		</div>
 	);
 };

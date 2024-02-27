@@ -25,7 +25,7 @@ interface Data {
 }
 
 function App() {
-	const [lastUpdated, setLastUpdated] = useState(new Date());
+	const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 	const [currentDatetime, setCurrentDatetime] = useState(new Date());
 	const [theme, setTheme] = useState('light');
 	const [count, setCount] = useState(0);
@@ -41,6 +41,7 @@ function App() {
 				const data = res.data() as Data;
 				if (data) {
 					setTotalCount(data.count);
+					localStorage.setItem('count', data.count.toString());
 					setLastUpdated(data.lastUpdated.toDate());
 				}
 			})
@@ -56,6 +57,20 @@ function App() {
 			if (theme === 'dark')
 				document.documentElement.classList.add('dark');
 			else document.documentElement.classList.remove('dark');
+		}
+
+		// check last saved count
+		const savedCount = localStorage.getItem('count');
+		if (savedCount) {
+			const covertedSavedCount = parseInt(savedCount);
+			if (
+				typeof covertedSavedCount === 'number' &&
+				covertedSavedCount >= 0
+			)
+				setTotalCount(covertedSavedCount);
+			else localStorage.removeItem('count');
+		} else {
+			setTotalCount(0);
 		}
 
 		// sign in anonymously then get data
@@ -80,6 +95,7 @@ function App() {
 			});
 			setCount(0);
 			setLastUpdated(new Date());
+			localStorage.setItem('count', totalCount.toString());
 		}
 	}, [submitCounterDebounce, counterRef, count]);
 

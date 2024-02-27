@@ -19,6 +19,11 @@ import { signInAnonymously } from 'firebase/auth';
 import { useDebounce } from '@uidotdev/usehooks';
 import Alert from './components/Alert';
 
+interface Data {
+	count: number;
+	lastUpdated: Timestamp;
+}
+
 function App() {
 	const [lastUpdated, setLastUpdated] = useState(new Date());
 	const [currentDatetime, setCurrentDatetime] = useState(new Date());
@@ -33,8 +38,11 @@ function App() {
 	const getData = () => {
 		getDoc(counterRef)
 			.then((res) => {
-				const data = res.data();
-				if (data) setTotalCount(data.count);
+				const data = res.data() as Data;
+				if (data) {
+					setTotalCount(data.count);
+					setLastUpdated(data.lastUpdated.toDate());
+				}
 			})
 			.catch((err) => {
 				setError(err.message);
@@ -145,6 +153,7 @@ function App() {
 						onRefresh={handleLastUpdatedRefresh}
 						currentDateTime={currentDatetime}
 					/>
+
 					<Footer />
 				</div>
 			</div>

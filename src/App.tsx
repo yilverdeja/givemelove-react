@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import HeartCounter from './components/HeartCounter';
 import Footer from './components/Footer';
 import UpdateText from './components/UpdateText';
@@ -32,7 +32,7 @@ function App() {
 	const [totalCount, setTotalCount] = useState(0);
 	const [error, setError] = useState('');
 	const size = useWindowSize();
-	const counterRef = doc(db, 'counter/counter');
+	const counterRef = useMemo(() => doc(db, 'counter/counter'), []);
 	const submitCounterDebounce = useDebounce(count, 1000);
 
 	const getData = () => {
@@ -85,23 +85,28 @@ function App() {
 
 	useEffect(() => {
 		if (count === 0) return;
-		if (submitCounterDebounce) {
-			const timestamp = Timestamp.fromDate(new Date());
-			updateDoc(counterRef, {
-				count: increment(submitCounterDebounce),
-				lastUpdated: timestamp,
-			}).catch((err) => {
-				setError(err.message);
-			});
-			setCount(0);
-			setLastUpdated(new Date());
-			localStorage.setItem('count', totalCount.toString());
-		}
+		// useDebounce keeps the *previous* value until the delay elapses after the
+		// last change. After we flush, count becomes 0 but submitCounterDebounce can
+		// still equal the old batch for ~delay ms. New clicks then raise count while
+		// submitCounterDebounce is stale; without this guard we'd re-apply
+		// increment(oldBatch) and explode the server counter.
+		if (submitCounterDebounce === 0 || submitCounterDebounce !== count) return;
+
+		const timestamp = Timestamp.fromDate(new Date());
+		updateDoc(counterRef, {
+			count: increment(submitCounterDebounce),
+			lastUpdated: timestamp,
+		}).catch((err) => {
+			setError(err.message);
+		});
+		setCount(0);
+		setLastUpdated(new Date());
+		localStorage.setItem('count', totalCount.toString());
 	}, [submitCounterDebounce, counterRef, count]);
 
 	const handleClick = () => {
-		setCount(count + 1);
-		setTotalCount(totalCount + 1);
+		setCount((c) => c + 1);
+		setTotalCount((t) => t + 1);
 	};
 
 	const handleLastUpdatedRefresh = () => {
